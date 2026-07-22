@@ -1322,6 +1322,14 @@
       return `${p[2]}/${p[1]}/${parseInt(p[0]) + 543}`;
     }
 
+    function getPickerDateValue(picker, inputId) {
+      if (picker && picker.selectedDates && picker.selectedDates.length) {
+        return flatpickr.formatDate(picker.selectedDates[0], 'Y-m-d');
+      }
+      const input = document.getElementById(inputId);
+      return input ? input.value : '';
+    }
+
     function getBookingDateRangeLabel(startDate, endDate) {
       const finalEndDate = endDate || startDate;
       if (!finalEndDate || finalEndDate === startDate) return formatThaiDate(startDate);
@@ -2074,8 +2082,8 @@
         email: document.getElementById('email').value,
         department: document.getElementById('department').value, 
         room: document.getElementById('room').value, 
-        date: document.getElementById('date').value, 
-        endDate: document.getElementById('endDate').value,
+        date: getPickerDateValue(datePicker, 'date'), 
+        endDate: getPickerDateValue(endDatePicker, 'endDate'),
         startTime: document.getElementById('startTime').value, 
         endTime: document.getElementById('endTime').value, 
         purpose: document.getElementById('purpose').value, 
