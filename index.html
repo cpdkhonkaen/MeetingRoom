@@ -1330,6 +1330,26 @@
       return input ? input.value : '';
     }
 
+    function addDaysToDateKeyClient(dateKey, days) {
+      const date = new Date(dateKey + 'T00:00:00');
+      date.setDate(date.getDate() + days);
+      return flatpickr.formatDate(date, 'Y-m-d');
+    }
+
+    function buildBookingDateKeys(startDate, endDate) {
+      if (!startDate) return [];
+      const finalEndDate = endDate || startDate;
+      if (finalEndDate < startDate) return [];
+
+      const dates = [];
+      let currentDate = startDate;
+      while (currentDate <= finalEndDate) {
+        dates.push(currentDate);
+        currentDate = addDaysToDateKeyClient(currentDate, 1);
+      }
+      return dates;
+    }
+
     function getBookingDateRangeLabel(startDate, endDate) {
       const finalEndDate = endDate || startDate;
       if (!finalEndDate || finalEndDate === startDate) return formatThaiDate(startDate);
@@ -2077,13 +2097,17 @@
     function handleFormSubmit(e) {
       e.preventDefault();
       const btn = document.getElementById('submitBtn'); btn.disabled = true;
+      const selectedStartDate = getPickerDateValue(datePicker, 'date');
+      const selectedEndDateValue = getPickerDateValue(endDatePicker, 'endDate');
+      const selectedBookingDates = buildBookingDateKeys(selectedStartDate, selectedEndDateValue);
       const f = { 
         name: document.getElementById('name').value, 
         email: document.getElementById('email').value,
         department: document.getElementById('department').value, 
         room: document.getElementById('room').value, 
-        date: getPickerDateValue(datePicker, 'date'), 
-        endDate: getPickerDateValue(endDatePicker, 'endDate'),
+        date: selectedStartDate, 
+        endDate: selectedEndDateValue,
+        bookingDates: selectedBookingDates,
         startTime: document.getElementById('startTime').value, 
         endTime: document.getElementById('endTime').value, 
         purpose: document.getElementById('purpose').value, 
